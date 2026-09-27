@@ -1,0 +1,28 @@
+app = "cloudbebot"
+primary_region = "sin"
+
+[build]
+
+[env]
+  APP_ENV = "production"
+  LOG_LEVEL = "INFO"
+  PORT = "8080"
+  TRADING_MODE = "PULSE_ASSISTED"
+
+[processes]
+  api = "uvicorn apps.api.main:app --host 0.0.0.0 --port 8080"
+  cloudbet = "python -m workers.cloudbet_collector"
+  signal = "python -m workers.signal_worker"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = false
+  auto_start_machines = true
+  min_machines_running = 1
+  processes = ["api"]
+
+[[vm]]
+  cpu_kind = "shared"
+  cpus = 1
+  memory_mb = 512
